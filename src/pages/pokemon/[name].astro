@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import DefaultLayout from '../../layouts/DefaultLayout.astro';
+
+export async function getStaticPaths() {
+  const pokemonsResponse = await fetch(
+    'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0'
+  )
+  const { results: pokemonsData } = await pokemonsResponse.json()
+
+  // Get the paths we want to pre-render based on posts
+  const paths = pokemonsData.map(({ name, url }) => {
+    // console.log({ name, url })
+    return {
+      params: { name},
+      props: { url },
+    }
+  })
+
+  return paths
+}
+
+const { name } = Astro.params;
+const { url } = Astro.props;
+
+const pokemonResponse = await fetch(url);
+const pokemonData = await pokemonResponse.json();
+---
+<DefaultLayout title={name}>
+  <div>Good Pokemon, {name}!</div>
+  <Image src={pokemonData.sprites.front_default} alt={name} width={96} height={96} />
+  <div>{url}</div>
+  <pre><code>{JSON.stringify(pokemonData, null, 2)}</code></pre>
+</DefaultLayout>

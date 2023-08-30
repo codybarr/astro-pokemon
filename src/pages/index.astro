@@ -1,0 +1,16 @@
+---
+import DefaultLayout from '../layouts/DefaultLayout.astro';
+
+const pokemonsResponse = await fetch(
+  'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0'
+)
+const { results: pokemonsData } = await pokemonsResponse.json()
+---
+
+<DefaultLayout title="Astro Pokemon">
+  <ul>
+    {pokemonsData.map(({name}) => (
+      <li><a href={`/pokemon/${name}`}>{name}</a></li>
+    ))}
+  </ul>
+</DefaultLayout>
